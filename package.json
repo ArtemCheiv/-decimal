@@ -1,5 +1,5 @@
 {
-  "name": "decimal-js",
+  "name": "@artemcheiv/decimal-js",
   "description": "An arbitrary-precision Decimal type for JavaScript.",
   "version": "1.0.0",
   "keywords": [

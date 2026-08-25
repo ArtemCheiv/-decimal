@@ -1,4 +1,4 @@
-// Type definitions for decimal-js >=7.0.0
+// Type definitions for @artemcheiv/decimal-js >=7.0.0
 // Project: https://github.com/ArtemCheiv/decimal.js
 // Definitions by: ArtemCheiv <https://github.com/ArtemCheiv>
 // Definitions: https://github.com/ArtemCheiv/decimal.js
@@ -17,8 +17,8 @@
 //
 // Example (alternative syntax commented-out):
 //
-//   import {Decimal} from "decimal-js"
-//   //import Decimal from "decimal-js"
+//   import {Decimal} from "@artemcheiv/decimal-js"
+//   //import Decimal from "@artemcheiv/decimal-js"
 //
 //   let r: Decimal.Rounding = Decimal.ROUND_UP;
 //   let c: Decimal.Configuration = {precision: 4, rounding: r};

@@ -1,5 +1,6 @@
 #### 1.0.0
 * 25/08/2026
+* Rename npm package to `@artemcheiv/decimal-js`
 * Fork by ArtemCheiv
 * Throw `Decimal.Error` instead of generic `Error`
 * Add `Decimal.from`, `Decimal.tryFrom`, `Decimal.pi`, `Decimal.e`, `Decimal.reset`, `Decimal.version`
