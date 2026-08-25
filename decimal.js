@@ -3,10 +3,10 @@
 
 
   /*!
-   *  decimal.js v10.6.0
+   *  @decimal.js v11.0.0
    *  An arbitrary-precision Decimal type for JavaScript.
-   *  https://github.com/MikeMcl/decimal.js
-   *  Copyright (c) 2025 Michael Mclaughlin <M8ch88l@gmail.com>
+   *  https://github.com/ArtemCheiv/decimal.js
+   *  Copyright (c) 2026 ArtemCheiv
    *  MIT Licence
    */
 
@@ -121,6 +121,7 @@
 
     LN10_PRECISION = LN10.length - 1,
     PI_PRECISION = PI.length - 1,
+    VERSION = '11.0.0',
 
     // Decimal.prototype object
     P = { toStringTag: tag };
@@ -182,14 +183,19 @@
    *  toFraction
    *  toHexadecimal             toHex
    *  toNearest
+   *  toBigInt
    *  toNumber
    *  toOctal
+   *  toPlainString
    *  toPower                   pow
    *  toPrecision
    *  toSignificantDigits       toSD
    *  toString
    *  truncated                 trunc
    *  valueOf                   toJSON
+   *  copy
+   *  shift
+   *  isSafeInteger
    */
 
 
@@ -229,7 +235,7 @@
     min = new Ctor(min);
     max = new Ctor(max);
     if (!min.s || !max.s) return new Ctor(NaN);
-    if (min.gt(max)) throw Error(invalidArgument + max);
+    if (min.gt(max)) raise(invalidArgument + max);
     k = x.cmp(min);
     return k < 0 ? min : x.cmp(max) > 0 ? max : new Ctor(x);
   };
@@ -1045,6 +1051,16 @@
 
 
   /*
+   * Return true if the value of this Decimal is a finite integer within the range of a JavaScript
+   * safe integer ([-MAX_SAFE_INTEGER, MAX_SAFE_INTEGER]), otherwise return false.
+   *
+   */
+  P.isSafeInteger = function () {
+    return this.isInteger() && this.abs().lte(MAX_SAFE_INTEGER);
+  };
+
+
+  /*
    * Return true if the value of this Decimal is NaN, otherwise return false.
    *
    */
@@ -1648,7 +1664,7 @@
     var k,
       x = this;
 
-    if (z !== void 0 && z !== !!z && z !== 1 && z !== 0) throw Error(invalidArgument + z);
+    if (z !== void 0 && z !== !!z && z !== 1 && z !== 0) raise(invalidArgument + z);
 
     if (x.d) {
       k = getPrecision(x.d);
@@ -2079,7 +2095,7 @@
       maxD = e > 0 ? d : n1;
     } else {
       n = new Ctor(maxD);
-      if (!n.isInt() || n.lt(n1)) throw Error(invalidArgument + n);
+      if (!n.isInt() || n.lt(n1)) raise(invalidArgument + n);
       maxD = n.gt(d) ? (e > 0 ? d : n1) : n;
     }
 
@@ -2204,6 +2220,29 @@
    */
   P.toNumber = function () {
     return +this;
+  };
+
+
+  /*
+   * Return the value of this Decimal converted to a BigInt.
+   * Throws if the value is not a finite integer, or if BigInt is unavailable.
+   *
+   */
+  P.toBigInt = function () {
+    var x = this;
+    if (typeof BigInt === 'undefined') raise(decimalError + 'BigInt unavailable');
+    if (!x.isInteger()) raise(invalidArgument + x);
+    return BigInt((x.s < 0 ? '-' : '') + finiteToString(x));
+  };
+
+
+  /*
+   * Return a string representing the value of this Decimal without exponential notation.
+   *
+   */
+  P.toPlainString = function () {
+    var str = finiteToString(this);
+    return this.isNeg() && !this.isZero() ? '-' + str : str;
   };
 
 
@@ -2455,6 +2494,31 @@
 
 
   /*
+   * Return a new Decimal with the same value as this Decimal.
+   *
+   */
+  P.copy = function () {
+    return new this.constructor(this);
+  };
+
+
+  /*
+   * Return a new Decimal whose value is this Decimal multiplied by 10**n, without rounding the
+   * coefficient. Overflow and underflow follow minE/maxE.
+   *
+   * n {number} Integer exponent in the range -EXP_LIMIT to EXP_LIMIT inclusive.
+   *
+   */
+  P.shift = function (n) {
+    var x = this,
+      Ctor = x.constructor;
+    checkInt32(n, -EXP_LIMIT, EXP_LIMIT);
+    if (!x.d || !n) return new Ctor(x);
+    return new Ctor((x.s < 0 ? '-' : '') + finiteToString(x) + 'e' + (n > 0 ? '+' : '') + n);
+  };
+
+
+  /*
    * Return a string representing the value of this Decimal.
    * Unlike `toString`, negative zero will include the minus sign.
    *
@@ -2517,6 +2581,40 @@
    */
 
 
+  function DecimalError(message) {
+    this.name = 'DecimalError';
+    this.message = message;
+    if (typeof Error.captureStackTrace === 'function') {
+      Error.captureStackTrace(this, DecimalError);
+    } else {
+      this.stack = (new Error(message)).stack;
+    }
+  }
+
+  DecimalError.prototype = Object.create(Error.prototype);
+  DecimalError.prototype.constructor = DecimalError;
+
+  function raise(message) {
+    throw new DecimalError(message);
+  }
+
+  // Apply minE/maxE overflow and underflow to a Decimal instance.
+  function clampExponent(x, e, digits) {
+    var Ctor = x.constructor;
+    if (e > Ctor.maxE) {
+      x.e = NaN;
+      x.d = null;
+    } else if (e < Ctor.minE) {
+      x.e = 0;
+      x.d = [0];
+    } else {
+      x.e = e;
+      x.d = digits;
+    }
+    return x;
+  }
+
+
   function digitsToString(d) {
     var i, k, ws,
       indexOfLastWord = d.length - 1,
@@ -2549,7 +2647,7 @@
 
   function checkInt32(i, min, max) {
     if (i !== ~~i || i < min || i > max) {
-      throw Error(invalidArgument + i);
+      raise(invalidArgument + i);
     }
   }
 
@@ -3159,14 +3257,14 @@
       // Reset global state in case the exception is caught.
       external = true;
       if (pr) Ctor.precision = pr;
-      throw Error(precisionLimitExceeded);
+      raise(precisionLimitExceeded);
     }
     return finalise(new Ctor(LN10), sd, 1, true);
   }
 
 
   function getPi(Ctor, sd, rm) {
-    if (sd > PI_PRECISION) throw Error(precisionLimitExceeded);
+    if (sd > PI_PRECISION) raise(precisionLimitExceeded);
     return finalise(new Ctor(PI), sd, rm, true);
   }
 
@@ -3573,22 +3671,7 @@
       x.d.push(+str);
 
       if (external) {
-
-        // Overflow?
-        if (x.e > x.constructor.maxE) {
-
-          // Infinity.
-          x.d = null;
-          x.e = NaN;
-
-        // Underflow?
-        } else if (x.e < x.constructor.minE) {
-
-          // Zero.
-          x.e = 0;
-          x.d = [0];
-          // x.constructor.underflow = true;
-        } // else x.constructor.underflow = false;
+        clampExponent(x, x.e, x.d);
       }
     } else {
 
@@ -3625,7 +3708,7 @@
     } else if (isOctal.test(str))  {
       base = 8;
     } else {
-      throw Error(invalidArgument + str);
+      raise(invalidArgument + str);
     }
 
     // Is there a binary exponent part?
@@ -4208,7 +4291,7 @@
    *
    */
   function config(obj) {
-    if (!obj || typeof obj !== 'object') throw Error(decimalError + 'Object expected');
+    if (!obj || typeof obj !== 'object') raise(decimalError + 'Object expected');
     var i, p, v,
       useDefaults = obj.defaults === true,
       ps = [
@@ -4225,7 +4308,7 @@
       if (p = ps[i], useDefaults) this[p] = DEFAULTS[p];
       if ((v = obj[p]) !== void 0) {
         if (mathfloor(v) === v && v >= ps[i + 1] && v <= ps[i + 2]) this[p] = v;
-        else throw Error(invalidArgument + p + ': ' + v);
+        else raise(invalidArgument + p + ': ' + v);
       }
     }
 
@@ -4237,13 +4320,13 @@
             (crypto.getRandomValues || crypto.randomBytes)) {
             this[p] = true;
           } else {
-            throw Error(cryptoUnavailable);
+            raise(cryptoUnavailable);
           }
         } else {
           this[p] = false;
         }
       } else {
-        throw Error(invalidArgument + p + ': ' + v);
+        raise(invalidArgument + p + ': ' + v);
       }
     }
 
@@ -4305,19 +4388,11 @@
         x.s = v.s;
 
         if (external) {
-          if (!v.d || v.e > Decimal.maxE) {
-
-            // Infinity.
+          if (!v.d) {
             x.e = NaN;
             x.d = null;
-          } else if (v.e < Decimal.minE) {
-
-            // Zero.
-            x.e = 0;
-            x.d = [0];
           } else {
-            x.e = v.e;
-            x.d = v.d.slice();
+            clampExponent(x, v.e, v.d.slice());
           }
         } else {
           x.e = v.e;
@@ -4349,16 +4424,7 @@
           for (e = 0, i = v; i >= 10; i /= 10) e++;
 
           if (external) {
-            if (e > Decimal.maxE) {
-              x.e = NaN;
-              x.d = null;
-            } else if (e < Decimal.minE) {
-              x.e = 0;
-              x.d = [0];
-            } else {
-              x.e = e;
-              x.d = [v];
-            }
+            clampExponent(x, e, [v]);
           } else {
             x.e = e;
             x.d = [v];
@@ -4398,10 +4464,23 @@
           x.s = 1;
         }
 
+        // Fast path for BigInts that fit in a single base-1e7 word.
+        if (v <= 9999999) {
+          v = Number(v);
+          for (e = 0, i = v; i >= 10; i /= 10) e++;
+          if (external) {
+            clampExponent(x, e, [v]);
+          } else {
+            x.e = e;
+            x.d = [v];
+          }
+          return;
+        }
+
         return parseDecimal(x, v.toString());
       }
 
-      throw Error(invalidArgument + v);
+      raise(invalidArgument + v);
     }
 
     Decimal.prototype = P;
@@ -4459,6 +4538,14 @@
     Decimal.tan = tan;
     Decimal.tanh = tanh;          // ES6
     Decimal.trunc = trunc;        // ES6
+
+    Decimal.from = from;
+    Decimal.tryFrom = tryFrom;
+    Decimal.pi = pi;
+    Decimal.e = e;
+    Decimal.reset = reset;
+    Decimal.Error = DecimalError;
+    Decimal.version = VERSION;
 
     if (obj === void 0) obj = {};
     if (obj) {
@@ -4732,7 +4819,7 @@
 
       i = k / 4;
     } else {
-      throw Error(cryptoUnavailable);
+      raise(cryptoUnavailable);
     }
 
     k = rd[--i];
@@ -4904,6 +4991,56 @@
    */
   function trunc(x) {
     return finalise(x = new this(x), x.e + 1, 1);
+  }
+
+
+  /*
+   * Return a new Decimal from `v`. Equivalent to `new Decimal(v)`.
+   *
+   */
+  function from(v) {
+    return new this(v);
+  }
+
+
+  /*
+   * Return a new Decimal from `v`, or `null` if `v` is not a valid Decimal value.
+   *
+   */
+  function tryFrom(v) {
+    try {
+      return new this(v);
+    } catch (err) {
+      return null;
+    }
+  }
+
+
+  /*
+   * Return pi rounded to `precision` significant digits using rounding mode `rounding`.
+   *
+   */
+  function pi() {
+    return getPi(this, this.precision, this.rounding);
+  }
+
+
+  /*
+   * Return e (Euler's number) rounded to `precision` significant digits using rounding mode
+   * `rounding`.
+   *
+   */
+  function e() {
+    return new this(1).exp();
+  }
+
+
+  /*
+   * Restore this Decimal constructor to its default configuration.
+   *
+   */
+  function reset() {
+    return this.config({ defaults: true });
   }
 
 

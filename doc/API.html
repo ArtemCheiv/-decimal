@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="Author" content="MMclaughlin">
-  <title>decimal.js API</title>
+  <meta name="Author" content="ArtemCheiv">
+  <title>@decimal.js API</title>
   <style>
 html{font-size:100%}
 body{background:#fff;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:13px;
@@ -81,8 +81,10 @@ li span{float:right;margin-right:10px;color:#c0c0c0}
       <li><a href="#Dcos"       >cos</a></li>
       <li><a href="#Dcosh"      >cosh</a></li>
       <li><a href="#Ddiv"       >div</a></li>
+      <li><a href="#De"         >e</a></li>
       <li><a href="#Dexp"       >exp</a></li>
       <li><a href="#Dfloor"     >floor</a></li>
+      <li><a href="#Dfrom"      >from</a></li>
       <li><a href="#Dhypot"     >hypot</a></li>
       <li><a href="#DisDecimal" >isDecimal</a></li>
       <li><a href="#Dln"        >ln</a></li>
@@ -94,8 +96,10 @@ li span{float:right;margin-right:10px;color:#c0c0c0}
       <li><a href="#Dmod"       >mod</a></li>
       <li><a href="#Dmul"       >mul</a></li>
       <li><a href="#DnoConflict">noConflict</a></li>
+      <li><a href="#Dpi"        >pi</a></li>
       <li><a href="#Dpow"       >pow</a></li>
       <li><a href="#Drandom"    >random</a></li>
+      <li><a href="#Dreset"     >reset</a></li>
       <li><a href="#Dround"     >round</a></li>
       <li><a href="#Dset"       >set</a></li>
       <li><a href="#Dsign"      >sign</a></li>
@@ -107,6 +111,7 @@ li span{float:right;margin-right:10px;color:#c0c0c0}
       <li><a href="#Dtan"       >tan</a></li>
       <li><a href="#Dtanh"      >tanh</a></li>
       <li><a href="#Dtrunc"     >trunc</a></li>
+      <li><a href="#DtryFrom"   >tryFrom</a></li>
     </ul>
 
     <a href="#constructor-properties">Properties</a>
@@ -139,6 +144,7 @@ li span{float:right;margin-right:10px;color:#c0c0c0}
       <li><a href="#abs"          >absoluteValue           </a><span>abs</span>     </li>
       <li><a href="#ceil"         >ceil                    </a>                     </li>
       <li><a href="#cmp"          >comparedTo              </a><span>cmp</span>     </li>
+      <li><a href="#copy"         >copy                    </a>                     </li>
       <li><a href="#clamp"        >clampedTo               </a><span>clamp</span>   </li>
       <li><a href="#cos"          >cosine                  </a><span>cos</span>     </li>
       <li><a href="#cbrt"         >cubeRoot                </a><span>cbrt</span>    </li>
@@ -160,6 +166,7 @@ li span{float:right;margin-right:10px;color:#c0c0c0}
       <li><a href="#atan"         >inverseTangent          </a><span>atan</span>    </li>
       <li><a href="#isFinite"     >isFinite                </a>                     </li>
       <li><a href="#isInt"        >isInteger               </a><span>isInt</span>   </li>
+      <li><a href="#isSafeInteger">isSafeInteger           </a>                     </li>
       <li><a href="#isNaN"        >isNaN                   </a>                     </li>
       <li><a href="#isNeg"        >isNegative              </a><span>isNeg</span>   </li>
       <li><a href="#isPos"        >isPositive              </a><span>isPos</span>   </li>
@@ -175,6 +182,7 @@ li span{float:right;margin-right:10px;color:#c0c0c0}
       <li><a href="#add"          >plus                    </a><span>add</span>     </li>
       <li><a href="#sd"           >precision               </a><span>sd</span>      </li>
       <li><a href="#round"        >round                   </a>                     </li>
+      <li><a href="#shift"        >shift                   </a>                     </li>
       <li><a href="#sin"          >sine                    </a><span>sin</span>     </li>
       <li><a href="#sqrt"         >squareRoot              </a><span>sqrt</span>    </li>
       <li><a href="#tan"          >tangent                 </a><span>tan</span>     </li>
@@ -188,10 +196,12 @@ li span{float:right;margin-right:10px;color:#c0c0c0}
       <li><a href="#toJSON"       >toJSON                  </a>                     </li>
       <li><a href="#toNearest"    >toNearest               </a>                     </li>
       <li><a href="#toNumber"     >toNumber                </a>                     </li>
+      <li><a href="#toBigInt"     >toBigInt                </a>                     </li>
       <li><a href="#toOctal"      >toOctal                 </a>                     </li>
       <li><a href="#pow"          >toPower                 </a><span>pow</span>     </li>
       <li><a href="#toPrecision"  >toPrecision             </a>                     </li>
       <li><a href="#toSD"         >toSignificantDigits     </a><span>toSD</span>    </li>
+      <li><a href="#toPlainString">toPlainString           </a>                     </li>
       <li><a href="#toString"     >toString                </a>                     </li>
       <li><a href="#trunc"        >truncated               </a><span>trunc</span>   </li>
       <li><a href="#valueOf"      >valueOf                 </a>                     </li>
@@ -213,15 +223,16 @@ li span{float:right;margin-right:10px;color:#c0c0c0}
 
   <div class="container">
 
-    <h1>decimal<span id='js'>.js</span></h1>
+    <h1>@decimal<span id='js'>.js</span></h1>
 
     <p>An arbitrary-precision Decimal type for JavaScript.</p>
-    <p><a href='https://github.com/MikeMcl/decimal.js'>Hosted on GitHub</a>.</p>
+    <p>Made by <a href='https://github.com/ArtemCheiv'>ArtemCheiv</a>.</p>
+    <p><a href='https://github.com/ArtemCheiv/decimal.js'>Hosted on GitHub</a>.</p>
 
     <h2>API</h2>
 
     <p>
-      See the <a href='https://github.com/MikeMcl/decimal.js'>README</a> on GitHub for a quick-start
+      See the <a href='https://github.com/ArtemCheiv/decimal.js'>README</a> on GitHub for a quick-start
       introduction.
     </p>
     <p>
@@ -525,6 +536,25 @@ a.equals(b)                    // true</pre>
     <pre>a = Decimal.exp(x)
 b = new Decimal(x).exp()
 a.equals(b)                    // true</pre>
+
+
+
+    <h5 id="De">e<code class='inset'>.e() <i>&rArr; Decimal</i></code></h5>
+    <p>
+      Returns Euler's number <code>e</code>, rounded to
+      <a href='#precision'><code>precision</code></a> significant digits using rounding mode
+      <a href='#rounding'><code>rounding</code></a>.
+    </p>
+    <pre>
+Decimal.set({ precision: 5 })
+Decimal.e()                    // '2.7183'</pre>
+
+
+
+    <h5 id="Dfrom">from<code class='inset'>.from(x) <i>&rArr; Decimal</i></code></h5>
+    <p><code>x</code>: <i>number|string|bigInt|Decimal</i></p>
+    <p>Returns a new Decimal. Equivalent to <code>new Decimal(x)</code>.</p>
+    <pre>Decimal.from('1.25').eq(new Decimal('1.25'))    // true</pre>
 
 
 
@@ -905,6 +935,37 @@ a.equals(b)                    // true</pre>
 b = new Decimal(x).trunc()
 a.equals(b)                    // true</pre>
 
+
+    <h5 id="Dpi">pi<code class='inset'>.pi() <i>&rArr; Decimal</i></code></h5>
+    <p>
+      Returns pi, rounded to <a href='#precision'><code>precision</code></a> significant digits
+      using rounding mode <a href='#rounding'><code>rounding</code></a>.
+    </p>
+    <pre>
+Decimal.set({ precision: 5 })
+Decimal.pi()                   // '3.1416'</pre>
+
+
+    <h5 id="Dreset">reset<code class='inset'>.reset() <i>&rArr; Decimal constructor</i></code></h5>
+    <p>
+      Restores this Decimal constructor to its default configuration. Equivalent to
+      <code>Decimal.config({ defaults: true })</code>.
+    </p>
+    <pre>
+Decimal.set({ precision: 8 })
+Decimal.reset()
+Decimal.precision              // 20</pre>
+
+
+    <h5 id="DtryFrom">tryFrom<code class='inset'>.tryFrom(x) <i>&rArr; Decimal|null</i></code></h5>
+    <p><code>x</code>: <i>any</i></p>
+    <p>
+      Returns a new Decimal if <code>x</code> is a valid value, otherwise returns
+      <code>null</code> instead of throwing.
+    </p>
+    <pre>
+Decimal.tryFrom('1.5')         // '1.5'
+Decimal.tryFrom('oops')        // null</pre>
 
 
 
@@ -1334,6 +1395,16 @@ y.cmp(NaN)                     // NaN</pre>
 
 
 
+    <h5 id="copy">copy<code class='inset'>.copy() <i>&rArr; Decimal</i></code></h5>
+    <p>Returns a new Decimal with the same value as this Decimal.</p>
+    <pre>
+x = new Decimal('1.25')
+y = x.copy()
+x.equals(y)                    // true
+x === y                        // false</pre>
+
+
+
     <h5 id="cos">cosine<code class='inset'>.cos() <i>&rArr; Decimal</i></code></h5>
     <p>
       Returns a new Decimal whose value is the cosine of the value in radians of this Decimal,
@@ -1689,6 +1760,18 @@ y.isInt()                                // false</pre>
 
 
 
+    <h5 id="isSafeInteger">isSafeInteger<code class='inset'>.isSafeInteger() <i>&rArr; boolean</i></code></h5>
+    <p>
+      Returns <code>true</code> if the value of this Decimal is a finite integer in the range
+      of a JavaScript safe integer, otherwise returns <code>false</code>.
+    </p>
+    <pre>
+new Decimal(42).isSafeInteger()                    // true
+new Decimal('9007199254740992').isSafeInteger()    // false
+new Decimal(1.5).isSafeInteger()                   // false</pre>
+
+
+
     <h5 id="isNaN">isNaN<code class='inset'>.isNaN() <i>&rArr; boolean</i></code></h5>
     <p>
       Returns <code>true</code> if the value of this Decimal is <code>NaN</code>, otherwise returns
@@ -1979,6 +2062,20 @@ x.round()                                // '1235'
 Decimal.rounding = Decimal.ROUND_DOWN
 x.round()                                // '1234'
 x                                        // '1234.5'</pre>
+
+
+
+    <h5 id="shift">shift<code class='inset'>.shift(n) <i>&rArr; Decimal</i></code></h5>
+    <p><code>n</code>: <i>number</i>: integer</p>
+    <p>
+      Returns a new Decimal whose value is this Decimal multiplied by <code>10<sup>n</sup></code>.
+      The coefficient is not rounded; overflow and underflow follow
+      <a href='#minE'><code>minE</code></a> and <a href='#maxE'><code>maxE</code></a>.
+    </p>
+    <pre>
+x = new Decimal('12.34')
+x.shift(2)                               // '1234'
+x.shift(-2)                              // '0.1234'</pre>
 
 
 
@@ -2324,7 +2421,18 @@ z = new Decimal(-0)
 
 
 
-     <h5 id="toOctal">
+    <h5 id="toBigInt">toBigInt<code class='inset'>.toBigInt() <i>&rArr; bigint</i></code></h5>
+    <p>
+      Returns the value of this Decimal converted to a BigInt. Throws if the value is not a finite
+      integer, or if BigInt is unavailable.
+    </p>
+    <pre>
+new Decimal(42).toBigInt()     // 42n
+new Decimal('-100').toBigInt() // -100n</pre>
+
+
+
+    <h5 id="toOctal">
       toOctal<code class='inset'>.toOctal([sd [, rm]]) <i>&rArr; string</i></code>
     </h5>
     <p>
@@ -2488,6 +2596,17 @@ x                                                // '9876.54321'</pre>
 
 
 
+    <h5 id="toPlainString">toPlainString<code class='inset'>.toPlainString() <i>&rArr; string</i></code></h5>
+    <p>
+      Returns a string representing the value of this Decimal without exponential notation.
+    </p>
+    <pre>
+x = new Decimal('1e-7')
+x.toString()                             // '1e-7'
+x.toPlainString()                        // '0.0000001'</pre>
+
+
+
     <h5 id="toString">toString<code class='inset'>.toString() <i>&rArr; string</i></code></h5>
     <p>Returns a string representing the value of this Decimal.</p>
     <p>
@@ -2636,15 +2755,15 @@ y.valueOf()                              // '-0'</pre>
 
     <h4 id='Errors'>Errors</h4>
     <p>
-      The errors that are thrown are generic <code>Error</code> objects whose <code>message</code>
-      property begins with <code>"[DecimalError]"</code>.
+      Invalid values throw a <code>Decimal.Error</code>, a subclass of <code>Error</code>, whose
+      <code>message</code> property begins with <code>"[DecimalError]"</code>.
     </p>
     <p>To determine if an exception is a Decimal Error:</p>
     <pre>
 try {
     // ...
 } catch (e) {
-    if ( e instanceof Error && /DecimalError/.test(e.message) ) {
+    if ( e instanceof Decimal.Error ) {
         // ...
     }
 }</pre>
@@ -2731,6 +2850,11 @@ z = x.multiply(y)                 // 4.1400000</pre>
       This library, like binary floating point and most calculators, does not retain trailing
       fractional zeros. Instead, the <code>toExponential</code>, <code>toFixed</code> and
       <code>toPrecision</code> methods enable trailing zeros to be added if and when required.<br />
+    </p>
+
+    <p class="end">
+      Made by <a href="https://github.com/ArtemCheiv">ArtemCheiv</a>.
+      MIT Licence.
     </p>
   </div>
 

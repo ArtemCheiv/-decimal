@@ -1,9 +1,9 @@
-// Type definitions for decimal.js >=7.0.0
-// Project: https://github.com/MikeMcl/decimal.js
-// Definitions by: Michael Mclaughlin <https://github.com/MikeMcl>
-// Definitions: https://github.com/MikeMcl/decimal.js
+// Type definitions for @decimal.js >=7.0.0
+// Project: https://github.com/ArtemCheiv/decimal.js
+// Definitions by: ArtemCheiv <https://github.com/ArtemCheiv>
+// Definitions: https://github.com/ArtemCheiv/decimal.js
 //
-// Documentation: http://mikemcl.github.io/decimal.js/
+// Documentation: ./doc/API.html
 //
 // Exports (available globally or when using import):
 //
@@ -17,8 +17,8 @@
 //
 // Example (alternative syntax commented-out):
 //
-//   import {Decimal} from "decimal.js"
-//   //import Decimal from "decimal.js"
+//   import {Decimal} from "@decimal.js"
+//   //import Decimal from "@decimal.js"
 //
 //   let r: Decimal.Rounding = Decimal.ROUND_UP;
 //   let c: Decimal.Configuration = {precision: 4, rounding: r};
@@ -60,7 +60,7 @@ type DecimalValue = string | number | bigint |Decimal;
 type DecimalRounding = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 type DecimalModulo = DecimalRounding | 9;
 
-// http://mikemcl.github.io/decimal.js/#constructor-properties
+// See doc/API.html#constructor-properties
 interface DecimalConfig {
   precision?: number;
   rounding?: DecimalRounding;
@@ -149,6 +149,8 @@ export declare class Decimal {
   isInteger(): boolean;
   isInt(): boolean;
 
+  isSafeInteger(): boolean;
+
   isNaN(): boolean;
 
   isNegative(): boolean;
@@ -230,6 +232,10 @@ export declare class Decimal {
 
   toNumber(): number;
 
+  toBigInt(): bigint;
+
+  toPlainString(): string;
+
   toOctal(significantDigits?: number): string;
   toOctal(significantDigits: number, rounding: DecimalRounding): string;
 
@@ -248,6 +254,10 @@ export declare class Decimal {
 
   truncated(): Decimal;
   trunc(): Decimal;
+
+  copy(): Decimal;
+
+  shift(n: number): Decimal;
 
   valueOf(): string;
 
@@ -294,6 +304,14 @@ export declare class Decimal {
   static tan(n: DecimalValue): Decimal;
   static tanh(n: DecimalValue): Decimal;
   static trunc(n: DecimalValue): Decimal;
+  static from(n: DecimalValue): Decimal;
+  static tryFrom(n: unknown): Decimal | null;
+  static pi(): Decimal;
+  static e(): Decimal;
+  static reset(): DecimalConstructor;
+
+  static readonly Error: { new (message?: string): Error };
+  static readonly version: string;
 
   static readonly default?: DecimalConstructor;
   static readonly Decimal?: DecimalConstructor;
