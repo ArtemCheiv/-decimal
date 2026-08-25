@@ -1,4 +1,4 @@
-# @decimal/js
+# decimal-js
 
 An arbitrary-precision Decimal type for JavaScript.
 
@@ -23,7 +23,7 @@ This library also adds trigonometric functions and supports non-integer powers. 
 ## Install
 
 ```bash
-npm install @decimal/js
+npm install decimal-js
 ```
 
 The library is the single JavaScript file `decimal.js` or the ES module `decimal.mjs`.
@@ -41,11 +41,11 @@ The library is the single JavaScript file `decimal.js` or the ES module `decimal
 **Node.js:**
 
 ```js
-const Decimal = require('@decimal/js');
+const Decimal = require('decimal-js');
 
-import Decimal from '@decimal/js';
+import Decimal from 'decimal-js';
 
-import { Decimal } from '@decimal/js';
+import { Decimal } from 'decimal-js';
 ```
 
 ## Use
