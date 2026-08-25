@@ -1,3 +1,7 @@
+#### 1.0.1
+* 25/08/2026
+* Rename npm package to `@decimal/js`
+
 #### 1.0.0
 * 25/08/2026
 * Rename project to `@decimal.js`

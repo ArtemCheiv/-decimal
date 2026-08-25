@@ -2,7 +2,7 @@ var time = new Date(),
   passed = 0,
   total = 0;
 
-console.log('\n Testing @decimal.js\n');
+console.log('\n Testing @decimal/js\n');
 
 [
   'abs',

@@ -1,5 +1,5 @@
 /*!
- *  @decimal.js v11.0.0
+ *  @decimal/js v11.0.0
  *  An arbitrary-precision Decimal type for JavaScript.
  *  https://github.com/ArtemCheiv/decimal.js
  *  Copyright (c) 2026 ArtemCheiv
