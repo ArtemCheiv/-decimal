@@ -44,6 +44,11 @@
     "url": "https://github.com/ArtemCheiv"
   },
   "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true,
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "test": "node ./test/test.js"
   },
