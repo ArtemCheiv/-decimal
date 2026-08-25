@@ -2,11 +2,8 @@ name: Release
 
 on:
   push:
-    branches: [main]
     tags:
       - 'v*'
-  release:
-    types: [published]
   workflow_dispatch:
 
 permissions:
@@ -19,20 +16,46 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 22
           registry-url: https://registry.npmjs.org
-          package-manager-cache: false
 
       - name: Update npm
         run: npm install -g npm@latest
 
       - name: Test
         run: npm test
+
+      - name: Set version from tag
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          VERSION="${TAG#v}"
+          if [ "${{ github.event_name }}" != "push" ]; then
+            echo "Push a version tag to publish, for example: git tag v1.0.0 && git push origin v1.0.0"
+            exit 1
+          fi
+          if [ -z "$VERSION" ] || [ "$VERSION" = "$TAG" ]; then
+            echo "Tag must look like v1.0.0 (got: $TAG)"
+            exit 1
+          fi
+          npm pkg set "version=$VERSION"
+          echo "Publishing version $VERSION"
+
+      - name: Check version is not already published
+        run: |
+          NAME=$(node -p "require('./package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "$NAME@$VERSION" version >/dev/null 2>&1; then
+            echo "Version $VERSION is already on npm. Push a new tag (e.g. v1.0.1)."
+            exit 1
+          fi
+          echo "Package $NAME@$VERSION is available to publish"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish
         run: npm publish --access public --provenance
